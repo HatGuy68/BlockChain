@@ -32,6 +32,23 @@ class Blockchain {
         newBlock.hash = newBlock.calculateHash();
         this.chain.push(newBlock);
     }
+
+    verifyIntegrity() {
+        for (let i = 1; i < this.chain.length; i++) {
+            const currentBlock = this.chain[i];
+            const previousBlock = this.chain[i - 1];
+
+            if (currentBlock.hash !== currentBlock.calculateHash()) {
+                return false;
+            }
+
+            if (currentBlock.previousHash !== previousBlock.hash) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
 
 let heyCoin = new Blockchain();
@@ -39,3 +56,9 @@ heyCoin.addBlock(new Block(1, "09/08/2021", { message: "First element in a block
 heyCoin.addBlock(new Block(2, "11/08/2021", { message: "Second element in a blockchain" }))
 
 console.log(JSON.stringify(heyCoin, null, 4));
+console.log(heyCoin.verifyIntegrity());
+
+heyCoin.chain[1].data = { message: "Changed Element in a blockchain." }
+
+console.log(JSON.stringify(heyCoin, null, 4));
+console.log(heyCoin.verifyIntegrity());
